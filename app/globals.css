@@ -122,3 +122,13 @@ h1.big{font-family:var(--head);font-weight:700;font-size:27px;line-height:1.12;l
   .wide h1.big{font-size:36px}
   .wide .dash-tiles .tn{font-size:34px}
 }
+
+/* finish & save (exit capture) */
+.finishbtn{display:block;width:100%;text-align:center;margin-top:10px;padding:14px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--green);font-family:var(--head);font-weight:600;font-size:15px;cursor:pointer}
+.finishbtn:hover{border-color:var(--green-2)}
+
+/* sessions list — column on mobile, grid on desktop */
+.sesslist{display:flex;flex-direction:column;gap:10px}
+@media (min-width:1024px){
+  .wide .sesslist{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+}

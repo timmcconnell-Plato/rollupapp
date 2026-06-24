@@ -50,6 +50,7 @@ export default function SessionsPage() {
     <>
       <Header ctx="sessions" />
       <div className="bd">
+        <div className="wide">
         {!supabaseReady && <p className="err">Supabase keys not set.</p>}
 
         <div className="row" style={{ gap: 6 }}>
@@ -69,7 +70,7 @@ export default function SessionsPage() {
             </div>
           </div>
         ) : (
-          list.map((s) => {
+          <div className="sesslist">{list.map((s) => {
             const isMatch = s.mode === 'match';
             const sc = scores[s.id];
             return (
@@ -91,9 +92,10 @@ export default function SessionsPage() {
                 </div>
               </Link>
             );
-          })
+          })}</div>
         )}
         {err && <p className="err">{err}</p>}
+        </div>
       </div>
       <BottomNav />
     </>

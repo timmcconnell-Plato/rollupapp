@@ -43,6 +43,7 @@ export default function SessionDetail() {
     <>
       <Header ctx="session" />
       <div className="bd">
+        <div className="wide">
         <Link href="/sessions" className="lr-sub" style={{ textDecoration: 'underline' }}>‹ All sessions</Link>
         <div>
           <div className="row" style={{ gap: 8 }}>
@@ -75,10 +76,10 @@ export default function SessionDetail() {
               <div className="tile"><div className="tn">{st.tightPct}%</div><div className="tl">within 30cm</div></div>
               <div className="tile"><div className="tn">{st.shortPct}%</div><div className="tl">short</div></div>
             </div>
-            <span className="kk">Finishing density</span>
-            <Heatmap shots={filtered} />
-            <span className="kk">Length profile</span>
-            <LengthProfile shots={filtered} />
+            <div className="cols2">
+              <div><span className="kk">Finishing density</span><Heatmap shots={filtered} /></div>
+              <div><span className="kk">Length profile</span><LengthProfile shots={filtered} /></div>
+            </div>
             <p className="faint" style={{ fontSize: 12, margin: 0 }}>Capture fidelity: manual tap — approximate. Length bands pending coach confirmation.</p>
           </>
         )}
@@ -100,6 +101,7 @@ export default function SessionDetail() {
 
         {st.n === 0 && !isMatch && <p className="muted">No placed bowls in this session.</p>}
         {err && <p className="err">{err}</p>}
+        </div>
       </div>
       <BottomNav />
     </>
