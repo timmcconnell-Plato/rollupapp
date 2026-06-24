@@ -178,3 +178,11 @@ h1.big{font-family:var(--head);font-weight:700;font-size:27px;line-height:1.12;l
 @media (min-width:1024px){
   .wide .actiongrid{grid-template-columns:1fr 1fr;max-width:520px}
 }
+
+/* ---- lean into green: section labels + green hero stat card ---- */
+.kk{color:var(--green)}
+.statcard.hero{background:var(--green);border-color:var(--green)}
+.statcard.hero .tile{background:transparent;border:0;padding:8px 4px}
+.statcard.hero .tn{color:#fff}
+.statcard.hero .tl{color:rgba(255,255,255,.82)}
+.statcard.hero .statcard-go{color:#fff}

@@ -50,7 +50,7 @@ export default function Home() {
           <p className="muted">Loading…</p>
         ) : (
           <>
-            <Link href="/dashboard" className="statcard">
+            <Link href="/dashboard" className="statcard hero">
               <div className="tiles3">
                 <div className="tile"><div className="tn">{st.n}</div><div className="tl">bowls logged</div></div>
                 <div className="tile"><div className="tn">{nSessions}</div><div className="tl">sessions</div></div>
