@@ -17,7 +17,11 @@ export default function MatchCapture({ sessionId }) {
 
   function place(m) {
     setPlaced((p) => [...p, { x: m.x, y: m.y, hand }]);
-    setPlacing(false);
+    // stay armed — place as many bowls in this end as you like
+  }
+
+  function undoPlaced() {
+    setPlaced((p) => p.slice(0, -1));
   }
 
   async function tally() {
@@ -57,9 +61,21 @@ export default function MatchCapture({ sessionId }) {
 
   return (
     <div className="bd">
-      <div className="row" style={{ justifyContent: 'space-between' }}>
-        <span className="kk">End {end}{totals.f + totals.a > 0 ? ` · running ${totals.f}\u2013${totals.a}` : ''}</span>
-        <button className="chip" aria-pressed={placing} onClick={() => setPlacing((p) => !p)}>+ place shot bowl</button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--line)', background: '#fff', padding: '14px 18px' }}>
+        <div style={{ textAlign: 'center', minWidth: 72 }}>
+          <div style={{ fontSize: 44, fontWeight: 700, lineHeight: 1, color: 'var(--deep)' }}>{totals.f}</div>
+          <div className="kk" style={{ marginTop: 4 }}>for</div>
+        </div>
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--muted)' }}>End {end}</div>
+          <button className="chip" aria-pressed={placing} onClick={() => setPlacing((p) => !p)}>
+            {placing ? 'Done placing' : '+ place bowls'}
+          </button>
+        </div>
+        <div style={{ textAlign: 'center', minWidth: 72 }}>
+          <div style={{ fontSize: 44, fontWeight: 700, lineHeight: 1, color: 'var(--muted)' }}>{totals.a}</div>
+          <div className="kk" style={{ marginTop: 4 }}>against</div>
+        </div>
       </div>
 
       <div className="row" style={{ gap: 18, flexWrap: 'nowrap' }}>
@@ -76,9 +92,16 @@ export default function MatchCapture({ sessionId }) {
       </div>
 
       <Rink dots={placed} interactive={placing} onPlace={place} />
-      <p className="muted" style={{ fontSize: 13, margin: 0 }}>
-        {placing ? 'Tap to place your shot bowl…' : 'Optional — placing a bowl is opt-in. Per end, two taps is the default.'}
-      </p>
+      <div className="row" style={{ justifyContent: 'space-between' }}>
+        <p className="muted" style={{ fontSize: 13, margin: 0 }}>
+          {placing
+            ? `Tap to add bowls to the head — ${placed.length} placed${placed.length ? ' · keep tapping' : ''}`
+            : 'Optional — two stepper taps is the default. Tap "+ place bowls" to map the head.'}
+        </p>
+        {placed.length > 0 && (
+          <button className="chip" onClick={undoPlaced} aria-label="Undo last placed bowl">↩</button>
+        )}
+      </div>
 
       <button className="cta" onClick={tally} disabled={busy}>{busy ? 'Saving…' : 'Tally end  →'}</button>
       {err && <p className="err">{err}</p>}
