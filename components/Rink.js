@@ -70,9 +70,18 @@ export default function Rink({ dots = [], interactive = true, onPlace }) {
       {dots.map((d, i) => {
         const p = toPx(d.x, d.y);
         const last = i === dots.length - 1;
+        const opp = d.side === 'opp' || d.side === 'opponent';
+        const fill = opp ? '#ffffff' : (COL[d.hand] || 'var(--fh)');
+        const stroke = opp ? 'var(--bh)' : (last ? '#ffffff' : 'var(--deep)');
         return (
-          <circle key={i} cx={p.x} cy={p.y} r={last ? 7 : 6} fill={COL[d.hand] || 'var(--fh)'}
-            stroke={last ? "#ffffff" : "var(--deep)"} strokeWidth={last ? 1.6 : 0.8} opacity="0.92" />
+          <g key={i}>
+            <circle cx={p.x} cy={p.y} r={last ? 8.5 : 7.5} fill={fill}
+              stroke={stroke} strokeWidth={opp ? 1.6 : (last ? 1.8 : 0.8)} opacity="0.95" />
+            {d.n ? (
+              <text x={p.x} y={p.y + 0.5} textAnchor="middle" dominantBaseline="middle"
+                fontSize="9.5" fontWeight="700" fill={opp ? 'var(--bh)' : '#ffffff'}>{d.n}</text>
+            ) : null}
+          </g>
         );
       })}
     </svg>

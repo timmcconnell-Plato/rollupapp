@@ -5,11 +5,17 @@ import Link from 'next/link';
 import Rink from './Rink';
 import { supabase } from '../lib/supabase';
 
-export default function MatchCapture({ sessionId }) {
+const BOWLS_PER_PLAYER = { singles: 4, pairs: 4, triples: 3, fours: 2 };
+const ORD = ['', '1st', '2nd', '3rd', '4th'];
+
+export default function MatchCapture({ sessionId, discipline = 'singles' }) {
+  const maxBowls = BOWLS_PER_PLAYER[discipline] || 4;
   const [end, setEnd] = useState(1);
   const [sfor, setSfor] = useState(0);
   const [sag, setSag] = useState(0);
   const [hand, setHand] = useState('forehand');
+  const [side, setSide] = useState('you');
+  const [bowlNo, setBowlNo] = useState(1);
   const [jackLen, setJackLen] = useState('long');
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState([]);
@@ -18,12 +24,13 @@ export default function MatchCapture({ sessionId }) {
   const [err, setErr] = useState('');
 
   function place(m) {
-    setPlaced((p) => [...p, { x: m.x, y: m.y, hand }]);
-    // stay armed — place as many bowls in this end as you like
+    setPlaced((p) => [...p, { x: m.x, y: m.y, hand, side, n: bowlNo }]);
+    setBowlNo((b) => (b >= maxBowls ? 1 : b + 1)); // auto-advance for speed
   }
 
   function undoPlaced() {
     setPlaced((p) => p.slice(0, -1));
+    setBowlNo((b) => (b <= 1 ? maxBowls : b - 1));
   }
 
   async function tally() {
@@ -37,7 +44,8 @@ export default function MatchCapture({ sessionId }) {
     if (placed.length) {
       const rows = placed.map((p) => ({
         session_id: sessionId, end_id: endRow.id, hand: p.hand, intent: 'draw', jack_length: jackLen,
-        finish_x: p.x, finish_y: p.y, capture_method: 'manual_tap', capture_fidelity: 'approximate',
+        finish_x: p.x, finish_y: p.y, bowl_number: p.n, side: p.side === 'opp' ? 'opponent' : 'player',
+        capture_method: 'manual_tap', capture_fidelity: 'approximate',
       }));
       const { error: e2 } = await supabase.from('shots').insert(rows);
       if (e2) { setBusy(false); setErr(e2.message); return; }
@@ -45,7 +53,7 @@ export default function MatchCapture({ sessionId }) {
     setBusy(false);
     setTotals((t) => ({ f: t.f + sfor, a: t.a + sag }));
     setEnd((n) => n + 1);
-    setSfor(0); setSag(0); setPlaced([]);
+    setSfor(0); setSag(0); setPlaced([]); setBowlNo(1); setSide('you');
   }
 
   function Stepper({ label, value, set }) {
@@ -63,7 +71,7 @@ export default function MatchCapture({ sessionId }) {
 
   return (
     <div className="bd">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--line)', background: '#fff', padding: '14px 18px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--line)', borderRadius: 16, background: '#fff', padding: '14px 18px' }}>
         <div style={{ textAlign: 'center', minWidth: 72 }}>
           <div style={{ fontSize: 44, fontWeight: 700, lineHeight: 1, color: 'var(--deep)' }}>{totals.f}</div>
           <div className="kk" style={{ marginTop: 4 }}>for</div>
@@ -96,19 +104,38 @@ export default function MatchCapture({ sessionId }) {
         </div>
       </div>
 
-      <div className="field">
-        <label>Hand (for optional placement)</label>
-        <div className="seg" role="group" aria-label="Hand">
-          <button aria-pressed={hand === 'forehand'} onClick={() => setHand('forehand')}>Forehand</button>
-          <button aria-pressed={hand === 'backhand'} onClick={() => setHand('backhand')}>Backhand</button>
+      {placing && (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div className="field" style={{ gap: 7 }}>
+            <label>Whose bowl</label>
+            <div className="seg" role="group" aria-label="Whose bowl">
+              <button aria-pressed={side === 'you'} onClick={() => setSide('you')}>You</button>
+              <button aria-pressed={side === 'opp'} onClick={() => setSide('opp')}>Opposition</button>
+            </div>
+          </div>
+          <div className="field" style={{ gap: 7 }}>
+            <label>Which bowl</label>
+            <div className="seg" role="group" aria-label="Bowl number">
+              {Array.from({ length: maxBowls }, (_, i) => i + 1).map((n) => (
+                <button key={n} aria-pressed={bowlNo === n} onClick={() => setBowlNo(n)}>{ORD[n]}</button>
+              ))}
+            </div>
+          </div>
+          <div className="field" style={{ gap: 7 }}>
+            <label>Hand</label>
+            <div className="seg" role="group" aria-label="Hand">
+              <button aria-pressed={hand === 'forehand'} onClick={() => setHand('forehand')}>Forehand</button>
+              <button aria-pressed={hand === 'backhand'} onClick={() => setHand('backhand')}>Backhand</button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       <Rink dots={placed} interactive={placing} onPlace={place} />
       <div className="row" style={{ justifyContent: 'space-between' }}>
         <p className="muted" style={{ fontSize: 13, margin: 0 }}>
           {placing
-            ? `Tap to add bowls to the head — ${placed.length} placed${placed.length ? ' · keep tapping' : ''}`
+            ? `Placing ${side === 'opp' ? 'opposition' : 'your'} ${ORD[bowlNo]} bowl — tap the head. ${placed.length} down.`
             : 'Optional — two stepper taps is the default. Tap "+ place bowls" to map the head.'}
         </p>
         {placed.length > 0 && (
