@@ -14,6 +14,7 @@ const ND = [
 
 export default function PracticeCapture({ sessionId, jackLength }) {
   const [hand, setHand] = useState('forehand');
+  const [jackLen, setJackLen] = useState(jackLength || 'long');
   const [mode, setMode] = useState('draw');
   const [bowls, setBowls] = useState([]);
   const [saving, setSaving] = useState(0);
@@ -25,7 +26,7 @@ export default function PracticeCapture({ sessionId, jackLength }) {
     const { data, error } = await supabase.from('shots').insert({
       session_id: sessionId,
       hand: row.hand,
-      jack_length: jackLength || null,
+      jack_length: jackLen || null,
       intent: row.intent,
       finish_x: row.x ?? null,
       finish_y: row.y ?? null,
@@ -86,6 +87,17 @@ export default function PracticeCapture({ sessionId, jackLength }) {
         <div className="seg" role="group" aria-label="Hand">
           <button aria-pressed={hand === 'forehand'} onClick={() => setHand('forehand')}>Forehand</button>
           <button aria-pressed={hand === 'backhand'} onClick={() => setHand('backhand')}>Backhand</button>
+        </div>
+      </div>
+
+      <div className="field">
+        <label>Jack length — change it when you move the jack</label>
+        <div className="seg" role="group" aria-label="Jack length">
+          {['short', 'medium', 'long'].map((l) => (
+            <button key={l} aria-pressed={jackLen === l} onClick={() => setJackLen(l)}>
+              {l[0].toUpperCase() + l.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
 
