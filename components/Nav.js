@@ -2,12 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from './Auth';
 
 export function Header({ ctx }) {
+  const { user, signOut } = useAuth();
   return (
     <div className="hd">
       <span className="wm">RollUp</span>
-      <span className="ctx">{ctx || ''}</span>
+      <span className="ctx" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {ctx || ''}
+        {user && (
+          <a onClick={signOut} style={{ cursor: 'pointer', textDecoration: 'underline' }}>sign out</a>
+        )}
+      </span>
     </div>
   );
 }
