@@ -9,6 +9,7 @@ export default function MatchCapture({ sessionId }) {
   const [sfor, setSfor] = useState(0);
   const [sag, setSag] = useState(0);
   const [hand, setHand] = useState('forehand');
+  const [jackLen, setJackLen] = useState('long');
   const [placing, setPlacing] = useState(false);
   const [placed, setPlaced] = useState([]);
   const [totals, setTotals] = useState({ f: 0, a: 0 });
@@ -29,12 +30,12 @@ export default function MatchCapture({ sessionId }) {
     if (!supabase || !sessionId) { setErr('Supabase keys not set.'); return; }
     setBusy(true);
     const { data: endRow, error: e1 } = await supabase.from('ends').insert({
-      session_id: sessionId, end_number: end, shots_for: sfor, shots_against: sag,
+      session_id: sessionId, end_number: end, shots_for: sfor, shots_against: sag, jack_length: jackLen,
     }).select('id').single();
     if (e1) { setBusy(false); setErr(e1.message); return; }
     if (placed.length) {
       const rows = placed.map((p) => ({
-        session_id: sessionId, end_id: endRow.id, hand: p.hand, intent: 'draw',
+        session_id: sessionId, end_id: endRow.id, hand: p.hand, intent: 'draw', jack_length: jackLen,
         finish_x: p.x, finish_y: p.y, capture_method: 'manual_tap', capture_fidelity: 'approximate',
       }));
       const { error: e2 } = await supabase.from('shots').insert(rows);
@@ -81,6 +82,17 @@ export default function MatchCapture({ sessionId }) {
       <div className="row" style={{ gap: 18, flexWrap: 'nowrap' }}>
         <Stepper label="Shots for" value={sfor} set={setSfor} />
         <Stepper label="Shots against" value={sag} set={setSag} />
+      </div>
+
+      <div className="field">
+        <label>Jack length this end</label>
+        <div className="seg" role="group" aria-label="Jack length">
+          {['short', 'medium', 'long'].map((l) => (
+            <button key={l} aria-pressed={jackLen === l} onClick={() => setJackLen(l)}>
+              {l[0].toUpperCase() + l.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="field">
