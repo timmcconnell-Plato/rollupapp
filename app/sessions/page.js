@@ -6,7 +6,7 @@ import { Header, BottomNav } from '../../components/Nav';
 import { supabase, supabaseReady } from '../../lib/supabase';
 
 function fmtDate(s) {
-  try { return new Date(s).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' }); }
+  try { return new Date(s).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }); }
   catch { return ''; }
 }
 
@@ -21,7 +21,7 @@ export default function SessionsPage() {
     if (!supabase) { setSessions([]); return; }
     const { data: s, error } = await supabase
       .from('sessions')
-      .select('id,mode,name,notes,discipline,position,created_at')
+      .select('id,mode,name,notes,discipline,position,venue,created_at')
       .order('created_at', { ascending: false })
       .limit(500);
     if (error) { setErr(error.message); setSessions([]); return; }
@@ -51,50 +51,49 @@ export default function SessionsPage() {
       <Header ctx="sessions" />
       <div className="bd">
         <div className="wide">
-        {!supabaseReady && <p className="err">Supabase keys not set.</p>}
+          {!supabaseReady && <p className="err">Supabase keys not set.</p>}
 
-        <div className="row" style={{ gap: 6 }}>
-          {[['all', 'All'], ['practice', 'Practice'], ['match', 'Matches']].map(([v, l]) => (
-            <button key={v} className="chip" style={{ flex: 1 }} aria-pressed={tab === v} onClick={() => setTab(v)}>{l}</button>
-          ))}
-        </div>
-
-        {sessions === null ? (
-          <p className="muted">Loading…</p>
-        ) : list.length === 0 ? (
-          <div className="card">
-            <p style={{ marginTop: 0 }}>No {tab === 'all' ? '' : tab === 'practice' ? 'practice ' : 'match '}sessions yet.</p>
-            <div className="row" style={{ gap: 8 }}>
-              <Link href="/setup/practice" className="cta" style={{ textAlign: 'center', flex: 1 }}>New practice</Link>
-              <Link href="/setup/match" className="cta" style={{ textAlign: 'center', flex: 1 }}>New match</Link>
-            </div>
+          <div className="seg" role="group" aria-label="Filter sessions">
+            {[['all', 'All'], ['practice', 'Practice'], ['match', 'Matches']].map(([v, l]) => (
+              <button key={v} aria-pressed={tab === v} onClick={() => setTab(v)}>{l}</button>
+            ))}
           </div>
-        ) : (
-          <div className="sesslist">{list.map((s) => {
-            const isMatch = s.mode === 'match';
-            const sc = scores[s.id];
-            return (
-              <Link key={s.id} href={`/sessions/${s.id}`} className="listrow">
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="row" style={{ gap: 8, marginBottom: 2 }}>
+
+          {sessions === null ? (
+            <p className="muted">Loading…</p>
+          ) : list.length === 0 ? (
+            <div className="card">
+              <p style={{ marginTop: 0 }}>No {tab === 'all' ? '' : tab === 'practice' ? 'practice ' : 'match '}sessions yet.</p>
+              <div className="actiongrid">
+                <Link href="/setup/practice" className="actioncard"><span className="ic" /><span className="t">New practice</span><span className="s">Per-bowl, rich</span></Link>
+                <Link href="/setup/match" className="actioncard"><span className="ic" /><span className="t">New match</span><span className="s">Per-end, fast</span></Link>
+              </div>
+            </div>
+          ) : (
+            <div className="sesslist">{list.map((s) => {
+              const isMatch = s.mode === 'match';
+              const sc = scores[s.id];
+              return (
+                <Link key={s.id} href={`/sessions/${s.id}`} className="srow">
+                  <div className="srow-head">
                     <span className={`badge ${isMatch ? 'm' : 'p'}`}>{isMatch ? 'Match' : 'Practice'}</span>
-                    <span className="lr-title">{s.name || (isMatch ? 'Match' : 'Practice session')}</span>
+                    <span className="srow-title">{s.name || (isMatch ? 'Match' : 'Practice session')}</span>
+                    <span className="srow-metric">
+                      {isMatch
+                        ? (sc ? <><b>{sc.f}–{sc.a}</b><i>{sc.ends} ends</i></> : <i>no ends</i>)
+                        : <><b>{bowls[s.id] || 0}</b><i>bowls</i></>}
+                    </span>
                   </div>
-                  <div className="lr-sub">
-                    {fmtDate(s.created_at)} · {s.discipline}{s.position ? ` · ${s.position}` : ''}
-                    {s.notes ? ` · ${s.notes}` : ''}
+                  <div className="srow-meta">
+                    {fmtDate(s.created_at)} · {s.discipline}{s.position ? ` · ${s.position}` : ''}{s.venue ? ` · ${s.venue}` : ''}
                   </div>
-                </div>
-                <div className="lr-meta">
-                  {isMatch
-                    ? (sc ? <><span className="score">{sc.f}–{sc.a}</span><span className="lr-sub">{sc.ends} ends</span></> : <span className="lr-sub">no ends</span>)
-                    : <><span className="score">{bowls[s.id] || 0}</span><span className="lr-sub">bowls</span></>}
-                </div>
-              </Link>
-            );
-          })}</div>
-        )}
-        {err && <p className="err">{err}</p>}
+                  {s.notes && <p className="srow-notes">{s.notes}</p>}
+                  <span className="srow-go">View session <span aria-hidden>›</span></span>
+                </Link>
+              );
+            })}</div>
+          )}
+          {err && <p className="err">{err}</p>}
         </div>
       </div>
       <BottomNav />
