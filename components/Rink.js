@@ -29,8 +29,8 @@ export default function Rink({ dots = [], interactive = true, onPlace }) {
     onPlace(toMetres(px, py));
   }
 
-  const rings = [];
-  for (let cm = 5; cm <= 75; cm += 5) rings.push(cm);
+  const BOWL = 12.5;            // a bowl is ~12.5cm wide — rings count bowl-widths from the jack
+  const rings = [1, 2, 3, 4, 5, 6];
 
   return (
     <svg
@@ -41,20 +41,20 @@ export default function Rink({ dots = [], interactive = true, onPlace }) {
       aria-label="Head close-up — tap where the bowl finished, relative to the jack"
       style={{ width: '100%', maxWidth: 300, alignSelf: 'center', height: 'auto', display: 'block', border: '1px solid var(--line)', background: 'var(--pale)', cursor: interactive ? 'crosshair' : 'default', touchAction: 'none' }}
     >
-      {rings.map((cm) => {
-        const major = cm % 25 === 0;
+      {rings.map((n) => {
+        const major = n % 2 === 0;
         return (
-          <circle key={cm} cx={JX} cy={JY} r={cm * 1.5} fill="none"
+          <circle key={n} cx={JX} cy={JY} r={n * BOWL * 1.5} fill="none"
             stroke="var(--green)" strokeWidth={major ? 1 : 0.75}
-            opacity={major ? 0.32 : 0.16} />
+            opacity={major ? 0.3 : 0.16} />
         );
       })}
-      {[25, 50, 75].map((cm) => {
-        const r = cm * 1.5, a = -Math.PI / 4;
+      {[1, 2, 3, 4].map((n) => {
+        const r = n * BOWL * 1.5, a = -Math.PI / 4;
         return (
-          <text key={cm} x={JX + r * Math.cos(a)} y={JY + r * Math.sin(a) - 2}
+          <text key={n} x={JX + r * Math.cos(a)} y={JY + r * Math.sin(a) - 2}
             fontSize="9" fill="var(--green)" opacity="0.6" textAnchor="middle">
-            {cm}cm
+            {n === 1 ? '1 bowl' : n}
           </text>
         );
       })}

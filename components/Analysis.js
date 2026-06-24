@@ -18,14 +18,14 @@ export function computeStats(shots = []) {
   const long = draws.filter((s) => s.finish_y > 0.25).length;
   const left = draws.filter((s) => s.finish_x < -0.18).length;
   const right = draws.filter((s) => s.finish_x > 0.18).length;
-  const tight = draws.filter((s) => Math.hypot(s.finish_x, s.finish_y) <= 0.3).length;
+  const tight = draws.filter((s) => Math.hypot(s.finish_x, s.finish_y) <= 0.25).length;  // within 2 bowl-widths
   const avg = n ? draws.reduce((a, s) => a + Math.hypot(s.finish_x, s.finish_y), 0) / n : 0;
   return {
     n, fh, bh, short, long, left, right, tight,
     onLen: n - short - long,
     shortPct: pct(short), longPct: pct(long), onLenPct: pct(n - short - long),
     leftPct: pct(left), rightPct: pct(right), onLinePct: pct(n - left - right),
-    tightPct: pct(tight), avgMiss: Math.round(avg * 100),
+    tightPct: pct(tight), avgMiss: Math.round(avg * 100), avgBowls: Math.round((avg / 0.125) * 10) / 10,
   };
 }
 
@@ -41,8 +41,8 @@ export function Heatmap({ shots = [], max: maxW = 320 }) {
   });
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: maxW, alignSelf: 'center', display: 'block', border: '1px solid var(--line)', background: '#fff' }}>
-      {[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75].map((cm) => (
-        <circle key={cm} cx={JX} cy={JY} r={cm} fill="none" stroke="var(--green)" strokeWidth={cm % 25 === 0 ? 1 : 0.6} opacity={cm % 25 === 0 ? 0.22 : 0.1} />
+      {[1, 2, 3, 4, 5, 6].map((n) => (
+        <circle key={n} cx={JX} cy={JY} r={n * 12.5} fill="none" stroke="var(--green)" strokeWidth={n % 2 === 0 ? 1 : 0.6} opacity={n % 2 === 0 ? 0.2 : 0.1} />
       ))}
       {Object.keys(grid).map((k) => {
         const [c, r] = k.split('_').map(Number);
