@@ -54,7 +54,7 @@ export default function Home() {
               <div className="tiles3">
                 <div className="tile"><div className="tn">{st.n}</div><div className="tl">bowls logged</div></div>
                 <div className="tile"><div className="tn">{nSessions}</div><div className="tl">sessions</div></div>
-                <div className="tile"><div className="tn">{st.n ? `${st.tightPct}%` : '—'}</div><div className="tl">within 30cm</div></div>
+                <div className="tile"><div className="tn">{st.n ? `${st.tightPct}%` : '—'}</div><div className="tl">within 2 bowls</div></div>
               </div>
               <span className="statcard-go">Open dashboard <span aria-hidden>›</span></span>
             </Link>

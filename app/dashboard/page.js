@@ -65,7 +65,7 @@ export default function Dashboard() {
                 <div className="tile"><div className="tn">{st.n}</div><div className="tl">bowls placed</div></div>
                 <div className="tile"><div className="tn">{sessions.length}</div><div className="tl">sessions</div></div>
                 <div className="tile"><div className="tn">{nPractice}/{nMatch}</div><div className="tl">practice / match</div></div>
-                <div className="tile"><div className="tn">{st.tightPct}%</div><div className="tl">within 30cm</div></div>
+                <div className="tile"><div className="tn">{st.tightPct}%</div><div className="tl">within 2 bowls</div></div>
                 <div className="tile"><div className="tn">{st.shortPct}%</div><div className="tl">short of jack</div></div>
                 <div className="tile"><div className="tn">{st.fh}/{st.bh}</div><div className="tl">FH / BH</div></div>
               </div>

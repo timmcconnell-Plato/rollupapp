@@ -73,7 +73,7 @@ export default function SessionDetail() {
             </div>
             <div className="tiles3">
               <div className="tile"><div className="tn">{st.n}</div><div className="tl">bowls</div></div>
-              <div className="tile"><div className="tn">{st.tightPct}%</div><div className="tl">within 30cm</div></div>
+              <div className="tile"><div className="tn">{st.tightPct}%</div><div className="tl">within 2 bowls</div></div>
               <div className="tile"><div className="tn">{st.shortPct}%</div><div className="tl">short</div></div>
             </div>
             <div className="cols2">
