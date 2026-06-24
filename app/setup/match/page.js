@@ -37,7 +37,7 @@ export default function MatchSetup() {
     }).select('id').single();
     setBusy(false);
     if (error) { setErr(error.message); return; }
-    router.push(`/capture?s=${data.id}&mode=match`);
+    router.push(`/capture?s=${data.id}&mode=match&disc=${discipline}`);
   }
 
   return (

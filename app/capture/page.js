@@ -11,7 +11,7 @@ export default function CapturePage() {
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
-    setParams({ s: q.get('s'), mode: q.get('mode') || 'practice', jl: q.get('jl') || 'long' });
+    setParams({ s: q.get('s'), mode: q.get('mode') || 'practice', jl: q.get('jl') || 'long', disc: q.get('disc') || 'singles' });
   }, []);
 
   if (!params) return <><Header ctx="capture" /><div className="bd" /><BottomNav /></>;
@@ -34,7 +34,7 @@ export default function CapturePage() {
     <>
       <Header ctx={isMatch ? 'match' : `practice · ${params.jl} jack`} />
       {isMatch
-        ? <MatchCapture sessionId={params.s} />
+        ? <MatchCapture sessionId={params.s} discipline={params.disc} />
         : <PracticeCapture sessionId={params.s} jackLength={params.jl} />}
       <BottomNav />
     </>

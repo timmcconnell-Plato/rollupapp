@@ -21,7 +21,7 @@ export default function ReportsPage() {
     const map = {}; (s || []).forEach((r) => { map[r.id] = r.mode; });
     setModeById(map);
     const { data, error } = await supabase
-      .from('shots').select('session_id,hand,jack_length,finish_x,finish_y,intent')
+      .from('shots').select('session_id,hand,jack_length,finish_x,finish_y,intent,side')
       .not('finish_y', 'is', null).limit(5000);
     if (error) { setErr(error.message); setShots([]); return; }
     setShots(data || []);
@@ -60,7 +60,7 @@ export default function ReportsPage() {
   const pts = (shots || []).filter((p) => {
     const m = modeById[p.session_id];
     const okSrc = fSrc === 'all' || (fSrc === 'practice' ? m === 'training' : m === 'match');
-    return okSrc && (fHand === 'all' || p.hand === fHand) && (fLen === 'all' || p.jack_length === fLen);
+    return p.side !== 'opponent' && okSrc && (fHand === 'all' || p.hand === fHand) && (fLen === 'all' || p.jack_length === fLen);
   });
   const st = computeStats(pts);
 

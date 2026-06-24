@@ -24,13 +24,13 @@ export default function Home() {
       .order('created_at', { ascending: false }).limit(60);
     setSessions(s || []);
     const { data: sh } = await supabase.from('shots')
-      .select('hand,finish_x,finish_y').not('finish_y', 'is', null).limit(5000);
+      .select('hand,finish_x,finish_y,side').not('finish_y', 'is', null).limit(5000);
     setShots(sh || []);
   }, []);
   useEffect(() => { load(); }, [load]);
 
   const first = (profile?.display_name || '').trim().split(' ')[0];
-  const st = computeStats(shots);
+  const st = computeStats(shots.filter((s) => s.side !== 'opponent'));
   const nSessions = (sessions || []).length;
   const recent = (sessions || []).slice(0, 3);
   const hasData = nSessions > 0;

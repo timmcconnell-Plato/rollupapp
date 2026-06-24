@@ -19,7 +19,7 @@ export default function Dashboard() {
     const { data: s } = await supabase.from('sessions').select('id,mode,name,created_at').order('created_at', { ascending: false }).limit(500);
     const map = {}; (s || []).forEach((r) => { map[r.id] = r.mode; });
     setModeById(map); setSessions(s || []);
-    const { data, error } = await supabase.from('shots').select('session_id,hand,jack_length,finish_x,finish_y').not('finish_y', 'is', null).limit(5000);
+    const { data, error } = await supabase.from('shots').select('session_id,hand,jack_length,finish_x,finish_y,side').not('finish_y', 'is', null).limit(5000);
     if (error) { setErr(error.message); setShots([]); return; }
     setShots(data || []);
   }, []);
@@ -29,7 +29,7 @@ export default function Dashboard() {
     const m = modeById[p.session_id];
     const okSrc = src === 'all' || (src === 'practice' ? m === 'training' : m === 'match');
     const okHand = hand === 'all' || p.hand === hand;
-    return okSrc && okHand;
+    return p.side !== 'opponent' && okSrc && okHand;
   });
   const st = computeStats(pts);
   const nMatch = Object.values(modeById).filter((m) => m === 'match').length;

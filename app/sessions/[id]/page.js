@@ -22,7 +22,7 @@ export default function SessionDetail() {
       const { data: s, error } = await supabase.from('sessions').select('*').eq('id', id).maybeSingle();
       if (error) { setErr(error.message); setLoading(false); return; }
       setSession(s);
-      const { data: sh } = await supabase.from('shots').select('hand,jack_length,finish_x,finish_y,intent,outcome_tag').eq('session_id', id).limit(2000);
+      const { data: sh } = await supabase.from('shots').select('hand,jack_length,finish_x,finish_y,intent,outcome_tag,bowl_number,side').eq('session_id', id).limit(2000);
       setShots(sh || []);
       const { data: en } = await supabase.from('ends').select('end_number,shots_for,shots_against,jack_length').eq('session_id', id).order('end_number');
       setEnds(en || []);
@@ -34,7 +34,11 @@ export default function SessionDetail() {
   if (!session) return (<><Header ctx="session" /><div className="bd"><p className="err">Session not found.</p><Link href="/sessions" className="cta" style={{ textAlign: 'center' }}>Back to sessions</Link></div><BottomNav /></>);
 
   const isMatch = session.mode === 'match';
-  const filtered = shots.filter((s) => hand === 'all' || s.hand === hand);
+  const yours = shots.filter((s) => s.side !== 'opponent');
+  const filtered = yours.filter((s) => hand === 'all' || s.hand === hand);
+  const ORD = ['', '1st', '2nd', '3rd', '4th'];
+  const byBowl = [1, 2, 3, 4].map((n) => ({ n, g: computeStats(yours.filter((s) => s.bowl_number === n)) })).filter((x) => x.g.n > 0);
+  const oppCount = shots.filter((s) => s.side === 'opponent' && s.finish_y != null).length;
   const st = computeStats(filtered);
   const sf = ends.reduce((a, e) => a + (e.shots_for || 0), 0);
   const sa = ends.reduce((a, e) => a + (e.shots_against || 0), 0);
@@ -96,6 +100,25 @@ export default function SessionDetail() {
                 </div>
               ))}
             </div>
+          </>
+        )}
+
+        {isMatch && byBowl.length > 0 && (
+          <>
+            <span className="kk">By bowl number — your draws</span>
+            <div className="card" style={{ padding: 0 }}>
+              {byBowl.map(({ n, g }) => (
+                <div key={n} className="endrow">
+                  <span style={{ fontWeight: 600, minWidth: 56 }}>{ORD[n]} bowl</span>
+                  <span className="faint" style={{ flex: 1 }}>{g.n} placed · {g.shortPct}% short</span>
+                  <span style={{ fontWeight: 600 }}>{g.tightPct}% within 2</span>
+                </div>
+              ))}
+            </div>
+            <p className="faint" style={{ fontSize: 12, margin: 0 }}>
+              Per-bowl detail builds across matches — patterns by delivery order get clearer with more ends.
+              {oppCount > 0 ? ` ${oppCount} opposition bowls logged this match.` : ''}
+            </p>
           </>
         )}
 
