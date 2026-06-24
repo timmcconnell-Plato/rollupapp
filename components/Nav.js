@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from './Auth';
+import Logo from './Logo';
 
 export function Header({ ctx }) {
   const { user, signOut } = useAuth();
   return (
     <div className="hd">
-      <span className="wm">RollUp</span>
+      <Logo height={24} />
       <span className="ctx" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {ctx || ''}
         {user && (

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, supabaseReady } from '../lib/supabase';
+import Logo from './Logo';
 
 const AuthCtx = createContext({ user: null, profile: null, loading: true, signOut: () => {} });
 export const useAuth = () => useContext(AuthCtx);
@@ -89,7 +90,7 @@ function AuthScreen() {
 
   return (
     <>
-      <div className="hd"><span className="wm">RollUp</span><span className="ctx">{mode === 'signup' ? 'create account' : 'sign in'}</span></div>
+      <div className="hd"><Logo height={24} /><span className="ctx">{mode === 'signup' ? 'create account' : 'sign in'}</span></div>
       <div className="bd">
         <h1 className="big">{mode === 'signup' ? 'Set up your account.' : 'Welcome back.'}</h1>
         <p className="sub">Your practice and match data, kept to your account.</p>
@@ -150,7 +151,7 @@ function ProfileSetup({ user, onDone }) {
 
   return (
     <>
-      <div className="hd"><span className="wm">RollUp</span><span className="ctx">profile</span></div>
+      <div className="hd"><Logo height={24} /><span className="ctx">profile</span></div>
       <div className="bd">
         <h1 className="big">A few details.</h1>
         <p className="sub">So your data slices by discipline and position.</p>
