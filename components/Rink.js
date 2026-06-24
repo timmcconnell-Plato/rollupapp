@@ -65,14 +65,14 @@ export default function Rink({ dots = [], interactive = true, onPlace }) {
       <text x={JX} y="14" textAnchor="middle" fontSize="11" fill="var(--deep)" opacity="0.55">long / behind</text>
       <text x={JX} y={H - 8} textAnchor="middle" fontSize="11" fill="var(--deep)" opacity="0.55">short / front</text>
 
-      <circle cx={JX} cy={JY} r="6" fill="var(--jack)" stroke="#854F0B" strokeWidth="1" />
+      <circle cx={JX} cy={JY} r="6" fill="var(--jack)" stroke="var(--jack-edge)" strokeWidth="1" />
 
       {dots.map((d, i) => {
         const p = toPx(d.x, d.y);
         const last = i === dots.length - 1;
         return (
           <circle key={i} cx={p.x} cy={p.y} r={last ? 7 : 6} fill={COL[d.hand] || 'var(--fh)'}
-            stroke={last ? '#FAF9F6' : '#04342C'} strokeWidth={last ? 1.6 : 0.8} opacity="0.92" />
+            stroke={last ? "#ffffff" : "var(--deep)"} strokeWidth={last ? 1.6 : 0.8} opacity="0.92" />
         );
       })}
     </svg>

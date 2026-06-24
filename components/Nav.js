@@ -24,8 +24,9 @@ export function BottomNav() {
   const on = (p) => (p === '/' ? path === '/' : path.startsWith(p));
   const items = [
     { href: '/', label: 'Home' },
-    { href: '/capture', label: 'Capture' },
+    { href: '/sessions', label: 'Sessions' },
     { href: '/reports', label: 'Reports' },
+    { href: '/dashboard', label: 'Dashboard' },
   ];
   return (
     <nav className="nav">
