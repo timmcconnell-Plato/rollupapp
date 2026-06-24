@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Rink from './Rink';
 import { supabase } from '../lib/supabase';
 
@@ -117,6 +118,7 @@ export default function MatchCapture({ sessionId }) {
 
       <button className="cta" onClick={tally} disabled={busy}>{busy ? 'Saving…' : 'Tally end  →'}</button>
       {err && <p className="err">{err}</p>}
+      <Link href={`/sessions/${sessionId}`} className="finishbtn">Finish match &amp; save  →</Link>
     </div>
   );
 }

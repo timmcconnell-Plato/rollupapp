@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import Rink from './Rink';
 import { decode } from '../lib/geometry';
 import { supabase } from '../lib/supabase';
@@ -142,6 +143,7 @@ export default function PracticeCapture({ sessionId, jackLength }) {
         </div>
       </div>
       {err && <p className="err">{err}</p>}
+      <Link href={`/sessions/${sessionId}`} className="finishbtn">Finish &amp; save  →</Link>
     </div>
   );
 }
