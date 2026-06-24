@@ -1,4 +1,5 @@
 import './globals.css';
+import { AuthProvider, AuthGate } from '../components/Auth';
 
 export const metadata = {
   title: 'RollUp — competitive lawn bowls',
@@ -24,7 +25,11 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <div className="shell">{children}</div>
+        <div className="shell">
+          <AuthProvider>
+            <AuthGate>{children}</AuthGate>
+          </AuthProvider>
+        </div>
       </body>
     </html>
   );
