@@ -1,4 +1,4 @@
-json{
+{
   "name": "rollup-app",
   "version": "0.1.0",
   "private": true,
@@ -9,7 +9,6 @@ json{
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0"
   },
   "engines": { "node": ">=18.17.0" }
 }
