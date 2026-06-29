@@ -1,5 +1,6 @@
 import './globals.css';
 import { AuthProvider, AuthGate } from '../components/Auth';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: 'RollUp — competitive lawn bowls',
@@ -30,6 +31,7 @@ export default function RootLayout({ children }) {
             <AuthGate>{children}</AuthGate>
           </AuthProvider>
         </div>
+        <Analytics />
       </body>
     </html>
   );
